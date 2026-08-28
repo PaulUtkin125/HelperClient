@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="325" d:DesignHeight="500"
+             x:Class="HelperClient.ProfilePage"
+			 xmlns:vm="using:HelperClient.ViewModels"
+			 x:DataType="vm:ProfileViewModel">
+
+	<Grid Background="#f0f0f0">
+		<StackPanel Margin="10">
+			<StackPanel >
+				<TextBlock Text="Корпус"/>
+				<ComboBox HorizontalAlignment="Stretch">
+					<ComboBoxItem Content="Главное здание"/>
+					<ComboBoxItem Content="Роддом"/>
+					<ComboBoxItem Content="Детский стационар"/>
+					<ComboBoxItem Content="Лаборатория"/>
+				</ComboBox>
+			</StackPanel>
+
+			<StackPanel Margin="0 10 0 0">
+				<TextBlock Text="Отделение" />
+				<ComboBox  HorizontalAlignment="Stretch">
+					<ComboBoxItem Content="женская консультация"/>
+					<ComboBoxItem Content="Верба"/>
+					<ComboBoxItem Content="аптека"/>
+					<ComboBoxItem Content="инженерная служба"/>
+					<ComboBoxItem Content="приемное отделение"/>
+					<ComboBoxItem Content="боксовое отделение"/>
+					<ComboBoxItem Content="травмпункт"/>
+					<ComboBoxItem Content="дневной стационар"/>
+					<ComboBoxItem Content="ДКДЦ"/>
+					<ComboBoxItem Content="инфекционно-педиатрическое отделение"/>
+					<ComboBoxItem Content="АРО2"/>
+					<ComboBoxItem Content="отделение функциональной диагностики"/>
+					<ComboBoxItem Content="хирургическое отделение"/>
+					<ComboBoxItem Content="отделение медицинской реабилитации"/>
+					<ComboBoxItem Content="детское хирургическое отделение"/>
+					<ComboBoxItem Content="пульманологическое отделение"/>
+					<ComboBoxItem Content="психоневрологическое отделение"/>
+					<ComboBoxItem Content="отделение нейрохирургии, травматологии, ортопедии"/>
+					<ComboBoxItem Content="отолоренгологическое"/>
+					<ComboBoxItem Content="КДЛ"/>
+					<ComboBoxItem Content="МБЛ"/>
+
+				</ComboBox>
+			</StackPanel>
+			<StackPanel Margin="0 10 0 0">
+				<TextBlock Text="Кабинет"/>
+				<TextBox/>
+			</StackPanel>
+			<Button Content="Сохранить" 
+					Margin="0 30 0 0"
+					HorizontalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					Background="#63b076"
+					Foreground="White"/>
+		</StackPanel>
+	</Grid>
+</UserControl>

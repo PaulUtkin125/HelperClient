@@ -1,0 +1,122 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="325" d:DesignHeight="500"
+             x:Class="HelperClient.HomePage"
+			 xmlns:vm="using:HelperClient.ViewModels"
+			 x:DataType="vm:HomeViewModel">
+
+	<Grid>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="60"/>
+		</Grid.RowDefinitions>
+
+		<Grid Background="#f0f0f0" Grid.Row="0">
+			<ScrollViewer HorizontalAlignment="Center">
+				<StackPanel>
+					<CheckBox Content="Моей проблемы нет в списке" IsChecked="{Binding IsCustomErrorBoxEnable}"/>
+					<TextBox TextWrapping="Wrap"  Width="300" Margin="0 0 0 20" IsEnabled="{Binding IsCustomErrorBoxEnable}"/>
+
+					<Expander Header="оборуование">
+						<StackPanel>
+							<CheckBox Content="принтер"/>
+							<CheckBox Content="монитор" />
+							<CheckBox Content="мышь" />
+							<CheckBox Content="клавиатура" />
+							<CheckBox Content="сканер" />
+						</StackPanel>
+					</Expander>
+					<Expander Header="рмис">
+						<StackPanel>
+							<CheckBox Content="не работает РМИС"/>
+							<CheckBox Content="изменение ошибочно указаного диагноза" />
+							<CheckBox Content="изменение профиля койки" />
+							<CheckBox Content="редактирование даты выписки" />
+							<CheckBox Content="настройка видимости шаблонов на анализы" />
+							<CheckBox Content="удаление случая госпитализации" />
+						</StackPanel>
+					</Expander>
+					<Expander Header="лис">
+						<StackPanel>
+							<CheckBox Content="Не получается подписать"/>
+							<CheckBox Content="не запускается ЛИС"/>
+						</StackPanel>
+					</Expander>
+					<CheckBox Content="Word/Excel/Powerpoint не работает"/>
+					<Expander Header="почты">
+						<StackPanel>
+							<CheckBox Content="подключение СЭД"/>
+							<CheckBox Content="подключение mz73"/>
+						</StackPanel>
+					</Expander>
+					<Expander Header="порталы">
+						<StackPanel>
+							<CheckBox Content="не заходит в ЕИС"/>
+							<CheckBox Content="подключение АЦК (госЗаказ, Финансы)"/>
+							<CheckBox Content="подключение ГИС ОМС"/>
+						</StackPanel>
+					</Expander>
+					<Expander Header="ЭЦП">
+						<StackPanel>
+							<CheckBox Content="Установка подписи"/>
+							<CheckBox Content="не подписывает"/>
+						</StackPanel>
+					</Expander>
+					<Expander Header="CD-диск">
+						<StackPanel>
+							<CheckBox Content="запись данных на CD-диск"/>
+							<CheckBox Content="копирование данных с CD-диска"/>
+						</StackPanel>
+					</Expander>
+				</StackPanel>
+			</ScrollViewer>
+			<!--<ScrollViewer HorizontalAlignment="Center">
+				<StackPanel>
+					<CheckBox Content="Моей проблемы нет в списке" IsChecked="{Binding IsCustomErrorBoxEnable}"/>
+					<TextBox TextWrapping="Wrap"  Width="300" Margin="0 0 0 20"
+							 IsEnabled="{Binding IsCustomErrorBoxEnable}"
+							 Text="{Binding CustomProblem}"
+							 Watermark="Опишите вашу проблему"/>
+					--><!-- Автоматическая генерация категорий --><!--
+					<ItemsControl ItemsSource="{Binding Problems}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<Expander Header="{Binding Title}" Margin="0,5">
+									<ItemsControl ItemsSource="{Binding Items}">
+										<ItemsControl.ItemsPanel>
+											<ItemsPanelTemplate>
+												<StackPanel Orientation="Vertical"/>
+											</ItemsPanelTemplate>
+										</ItemsControl.ItemsPanel>
+										<ItemsControl.ItemTemplate>
+											<DataTemplate>
+												<CheckBox Content="{Binding Name}"
+														  IsChecked="{Binding IsChecked}"
+														  Margin="5,2"/>
+											</DataTemplate>
+										</ItemsControl.ItemTemplate>
+									</ItemsControl>
+								</Expander>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</StackPanel>
+			</ScrollViewer>-->
+		</Grid>
+
+		<StackPanel Grid.Row="1" x:Name="bottomPanel" Orientation="Horizontal">
+			<TextBox Width="160" VerticalAlignment="Center" Text="{Binding PhoneNumber}" Watermark="+7 (000) 000-00-00" Margin="10 0 50 0">
+			</TextBox>
+			<Button Content="Отправить" 
+					Height="40" 
+					VerticalContentAlignment="Center"
+					HorizontalAlignment="Center"
+					Background="#63b076" 
+					Foreground="White"/>
+		</StackPanel>
+	</Grid>
+	
+</UserControl>

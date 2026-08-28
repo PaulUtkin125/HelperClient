@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="325" d:DesignHeight="500"
+             x:Class="HelperClient.MenuUC"
+			 xmlns:vm="using:HelperClient.ViewModels"
+			 x:DataType="vm:MenuViewModel">
+
+	<StackPanel Background="#f0f0f0" x:Name="MyMenu" Grid.Row="1" Grid.RowSpan="2" ZIndex="9">
+		<StackPanel Margin="10">
+			<Button Classes="MenuButton" Content="Профиль" Command="{Binding OpenProfileCommand}"/>
+			<Button Classes="MenuButton"  Content="Party Licenses" Command="{Binding OpenPartyLicensyCommand}"/>
+
+		</StackPanel>
+
+
+	</StackPanel>
+	
+</UserControl>
