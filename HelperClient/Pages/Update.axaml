@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:HelperClient.ViewModels"
+             mc:Ignorable="d"
+             x:Class="HelperClient.Pages.Update">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20" Spacing="12">
+            <TextBlock Text="Доступные обновления" FontSize="20" FontWeight="Bold"/>
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBox Width="260" Watermark="Поиск версии…" Text="{Binding SearchString, Mode=TwoWay}"/>
+                <Button Content="Найти" Command="{Binding SearchCommand}"/>
+                <Button Content="Обновить список" Command="{Binding RefreshCommand}"/>
+            </StackPanel>
+
+            <ProgressBar IsIndeterminate="True" Height="4"
+                         IsVisible="{Binding IsBusy}"/>
+
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" TextWrapping="Wrap"
+                       IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+            <TextBlock Text="{Binding StatusMessage}" Foreground="Green" TextWrapping="Wrap"
+                       IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1"
+                                CornerRadius="8" Padding="14" Margin="0,4">
+                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Title}"
+                                           FontSize="16" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="{Binding ReleaseDate}" Foreground="#777777" FontSize="13"/>
+                                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="0,4,0,0">
+                                    <TextBlock Text="{Binding FileSizeText}" Foreground="#777777" FontSize="13"/>
+                                    <TextBlock Text="{Binding HashShort}" Foreground="#AAAAAA" FontSize="12"/>
+                                </StackPanel>
+                                <Button Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Classes="accent"
+                                        Content="Скачать"
+                                        IsEnabled="{Binding !IsDownloading}"
+                                        Command="{Binding $parent[ItemsControl].((vm:UpdateViewModel)DataContext).DownloadCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

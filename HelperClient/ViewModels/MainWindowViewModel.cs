@@ -1,36 +1,43 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.Generic;
+using HelperClient.Services;
 
 namespace HelperClient.ViewModels
 {
-    internal partial class MainWindowViewModel : ObservableObject
+    /// <summary>Корневая модель окна: страницы Home/Update + команда открытия авторизации.</summary>
+    public partial class MainWindowViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private object? _currentPage;
+        public HomeViewModel Home { get; }
+        public UpdateViewModel Update { get; }
+        public AuthService Auth { get; }
 
-        [ObservableProperty]
-        private string _pageHeadTitle = "С какой проблемой Вы столкнулись?";
+        /// <summary>Открывает окно входа (вызывается из code-behind MainWindow).</summary>
+        public event Action? OpenAuthRequested;
 
-        private HomeViewModel _homeViewModel = new HomeViewModel();
-        public MainWindowViewModel() => CurrentPage = _homeViewModel;
-
-        [RelayCommand]
-        private void GoToMenu()
+        public MainWindowViewModel(HomeViewModel home, UpdateViewModel update, AuthService auth, ApiClient api)
         {
-            if (CurrentPage is MenuViewModel)
+            Home = home;
+            Update = update;
+            Auth = auth;
+
+            // токен истёк/невалиден (401) — предлагаем войти заново
+            api.Unauthorized += () =>
             {
-                PageHeadTitle = "С какой проблемой Вы столкнулись?";
-                CurrentPage = _homeViewModel;
-            }
-            else
-            {
-                PageHeadTitle = "Меню";
-                CurrentPage = new MenuViewModel(this);
-            }
+                Home.IsAuthenticated = false;
+                OpenAuthRequested?.Invoke();
+            };
         }
 
-    }
+        [RelayCommand]
+        private void OpenAuth() => OpenAuthRequested?.Invoke();
 
-    
+        /// <summary>После успешного входа обновляем состояние страниц.</summary>
+        public void OnAuthorizationSuccess()
+        {
+            Home.IsAuthenticated = true;
+            _ = Home.RefreshCategories();
+            _ = Update.Refresh();
+        }
+    }
 }

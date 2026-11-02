@@ -1,0 +1,116 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:HelperClient.ViewModels"
+			 mc:Ignorable="d"
+			 x:Class="HelperClient.Pages.Home">
+
+	<UserControl.Styles>
+		<!-- Expander без иконки-стрелки, только заголовок -->
+		<Style Selector="Expander /template/ ToggleButton#PART_toggle">
+			<Setter Property="Template">
+				<ControlTemplate>
+					<Border Background="Transparent">
+						<ContentPresenter Content="{TemplateBinding Content}" />
+					</Border>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+		<Style Selector="TextBlock.category-header">
+			<Setter Property="FontSize" Value="16" />
+			<Setter Property="FontWeight" Value="Bold" />
+			<Setter Property="Foreground" Value="#333333" />
+			<Setter Property="Margin" Value="0,10,0,5" />
+		</Style>
+		<Style Selector="CheckBox.problem-item">
+			<Setter Property="Margin" Value="10,3,0,3" />
+			<Setter Property="FontSize" Value="14" />
+			<Setter Property="Foreground" Value="#555555" />
+		</Style>
+		<Style Selector="TextBox.form-input">
+			<Setter Property="Watermark" Value="" />
+			<Setter Property="Padding" Value="10,8" />
+			<Setter Property="Background" Value="#FAFAFA" />
+			<Setter Property="BorderBrush" Value="#E0E0E0" />
+			<Setter Property="CornerRadius" Value="6" />
+		</Style>
+		<Style Selector="Button.accent">
+			<Setter Property="Background" Value="#1976D2" />
+			<Setter Property="Foreground" Value="White" />
+			<Setter Property="Padding" Value="20,10" />
+			<Setter Property="FontWeight" Value="SemiBold" />
+			<Setter Property="CornerRadius" Value="6" />
+		</Style>
+		<Style Selector="Button.accent:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="#1565C0" />
+		</Style>
+		<Style Selector="Button.flat">
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="BorderBrush" Value="#E0E0E0" />
+			<Setter Property="Foreground" Value="#555555" />
+			<Setter Property="Padding" Value="12,6" />
+			<Setter Property="CornerRadius" Value="6" />
+		</Style>
+	</UserControl.Styles>
+
+	<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+		<StackPanel Margin="20">
+			<!-- Список категорий проблем (справочник Category) -->
+			<TextBlock Classes="category-header" Text="Выберите проблему:"/>
+			<ItemsControl ItemsSource="{Binding Problems}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Expander Header="{Binding Title}" IsExpanded="False" Margin="0,5">
+							<ItemsControl ItemsSource="{Binding Items}">
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<CheckBox Classes="problem-item"
+												  Content="{Binding Name}"
+												  IsChecked="{Binding IsChecked}" />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</Expander>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+			<!-- Обновить/поиск справочника категорий -->
+			<StackPanel Orientation="Horizontal" Spacing="10" Margin="0,5,0,15">
+				<Button Classes="flat" Content="Обновить категории" Command="{Binding RefreshCategoriesCommand}"/>
+			</StackPanel>
+
+			<TextBlock Classes="category-header" Text="Номер кабинета:"/>
+			<TextBox Classes="form-input" Margin="0,5,0,15" MaxLength="255"
+					 Watermark="Например: 305" Text="{Binding OfficeNumber, Mode=TwoWay}"/>
+
+			<TextBlock Classes="category-header" Text="IP-адрес компьютера:"/>
+			<TextBox Classes="form-input" Margin="0,5,0,15" MaxLength="45"
+					 Watermark="Например: 192.168.1.100" Text="{Binding MachineIp, Mode=TwoWay}"/>
+
+			<TextBlock Classes="category-header" Text="Телефон для связи:"/>
+			<TextBox Classes="form-input" Margin="0,5,0,15" MaxLength="255"
+					 Watermark="+7 (___) ___-__-__" Text="{Binding PhoneNumber, Mode=TwoWay}"/>
+
+			<TextBlock Classes="category-header" Text="Комментарий:"/>
+			<TextBox Classes="form-input" Margin="0,5,0,15" Height="100" MaxLength="255"
+					 TextWrapping="Wrap" AcceptsReturn="True"
+					 Watermark="Опишите проблему подробнее…" Text="{Binding Comment, Mode=TwoWay}"/>
+
+			<!-- Сообщение об ошибке валидации/запроса -->
+			<TextBlock Text="{Binding ErrorMessage}"
+					   Foreground="Red" FontSize="13" TextWrapping="Wrap"
+					   Margin="0,0,0,10"
+					   IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+			<Button Classes="accent" HorizontalAlignment="Center" Padding="40,12"
+					Command="{Binding SendFormCommand}" IsEnabled="{Binding !IsSending}">
+				<StackPanel Orientation="Horizontal" Spacing="8">
+					<PathIcon Data="M2,21 L23,12 L2,3 Z" Foreground="White" Width="16" Height="16"/>
+					<TextBlock Text="Отправить заявку" FontWeight="Bold" Foreground="White"/>
+				</StackPanel>
+			</Button>
+		</StackPanel>
+	</ScrollViewer>
+</UserControl>

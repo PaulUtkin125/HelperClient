@@ -1,57 +1,44 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:HelperClient.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-		Height="500" Width="325" 
-		MaxWidth="325"
-		MinHeight="500" MinWidth="325"
-        x:Class="HelperClient.MainWindow"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="HelperClient.Views.MainWindow"
+        Icon="/Assets/logo.ico"
         Title="HelperClient"
-		x:DataType="vm:MainWindowViewModel"
-		xmlns:vm="using:HelperClient.ViewModels"
-		xmlns:views="using:HelperClient">
+        Width="800" Height="700"
+        TransparencyLevelHint="None"
+        Background="#F5F5F5"
+        CanResize="True">
 
-	<Window.DataTemplates>
-		<DataTemplate DataType="vm:HomeViewModel">
-			<views:HomePage/>
-		</DataTemplate>
-		<DataTemplate DataType="vm:MenuViewModel">
-			<views:MenuUC/>
-		</DataTemplate>
-		<DataTemplate DataType="vm:ProfileViewModel">
-			<views:ProfilePage/>
-		</DataTemplate>
-		<DataTemplate DataType="vm:PartyLicensyViewModel">
-			<views:PartyLicensyPage/>
-		</DataTemplate>
-	</Window.DataTemplates>	
-	
-	<Grid>
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="30"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="60"/>
-		</Grid.RowDefinitions>
+	<Grid RowDefinitions="Auto, *">
+		<!-- Верхняя панель: статус операции и кнопка авторизации -->
+		<Border Grid.Row="0" Background="White" Padding="10" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+				<TextBlock Text="{Binding Home.StatusMessage}"
+                           VerticalAlignment="Center"
+                           Foreground="Green"
+                           FontSize="14"
+                           IsVisible="{Binding Home.StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+				<Button Content="Авторизация"
+                        Classes="accent"
+                        Command="{Binding OpenAuthCommand}"/>
+			</StackPanel>
+		</Border>
 
-		<!-- Шапка/меню -->
-		<Button Command="{Binding GoToMenuCommand}" ZIndex="10" Margin="10 2 20 2" Width="20" Padding="0" Background="Transparent" >
-			<Image Source="/Assets/Image/gkb_logo_white_l.png" />
-		</Button>
-		<StackPanel Grid.Row="0" VerticalAlignment="Center">
-			<TextBlock Text="{Binding PageHeadTitle}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-		</StackPanel>
-
-		<!-- Меню -->
-		
-		<ContentControl Grid.Row="1" Grid.RowSpan="2" x:Name="MainFrame" Content="{Binding CurrentPage}"/>
-		
-		<!-- Основное тело -->
-		
-		
-
-
+		<!-- Основное содержимое -->
+		<TabView Grid.Row="1" Name="TabContainer" Background="Transparent" SelectedIndex="0">
+			<TabItem Header="Главная">
+				<ContentControl Content="{Binding Home}" Tag="Home"/>
+			</TabItem>
+			<TabItem Header="Обновления">
+				<ContentControl Content="{Binding Update}" Tag="Update"/>
+			</TabItem>
+		</TabView>
 	</Grid>
-	
 </Window>

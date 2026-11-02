@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="HelperClient.Views.AuthorizationWindow"
+        Title="Вход в систему"
+        Width="380" Height="300"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F5F5">
+
+    <StackPanel Margin="24" Spacing="12" VerticalAlignment="Center">
+        <TextBlock Text="Авторизация" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+
+        <TextBox Watermark="Имя пользователя" MaxLength="255"
+                 Text="{Binding Login, Mode=TwoWay}"/>
+        <PasswordBox Watermark="Пароль" Password="{Binding Password, Mode=TwoWay}"/>
+
+        <Button Content="Войти" HorizontalAlignment="Stretch" Classes="accent"
+                IsEnabled="{Binding !IsBusy}"
+                Command="{Binding LoginCommand}"/>
+
+        <ProgressBar IsIndeterminate="True" Height="4" IsVisible="{Binding IsBusy}"/>
+
+        <TextBlock Text="{Binding ErrorMessage}"
+                   Foreground="Red" FontSize="13" TextWrapping="Wrap"
+                   HorizontalAlignment="Center"
+                   IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+    </StackPanel>
+</Window>

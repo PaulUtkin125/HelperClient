@@ -1,26 +1,25 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
 using HelperClient.ViewModels;
 
-namespace HelperClient
+namespace HelperClient.Views
 {
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainWindowViewModel();
+            // DataContext устанавливаетсяcomposition root в Program.cs / App.axaml.cs
         }
-        private void SwitchLokeTextBox_Click(object sender, RoutedEventArgs e)
+
+        public MainWindow(MainWindowViewModel viewModel) : this()
         {
-            //CustomErorr.IsEnabled = !CustomErorr.IsEnabled;
+            DataContext = viewModel;
         }
 
-        private void MyPopup_Click(object sender, RoutedEventArgs e)
+        private void InitializeComponent()
         {
-
+            AvaloniaXamlLoader.Load(this);
         }
-
-
     }
 }
