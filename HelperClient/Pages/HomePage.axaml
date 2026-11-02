@@ -32,7 +32,7 @@
                                         <ItemsControl.ItemTemplate>
                                                 <DataTemplate x:DataType="vm:CategoryItemViewModel">
                                                         <RadioButton GroupName="ProblemCategory"
-                                                                     IsChecked="{Binding IsSelected}"
+                                                                     IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                                                      Margin="{Binding Indent, Converter={x:Static vm:IndentToThicknessConverter.Instance}}"
                                                                      Padding="0">
                                                                 <StackPanel Orientation="Horizontal" Spacing="4">

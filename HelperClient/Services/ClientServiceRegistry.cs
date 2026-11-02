@@ -97,7 +97,7 @@ namespace HelperClient.Services
         /// 2. Создание профиля машины: валидация, сохранение в локальный файл конфигурации
         /// и актуализация на сервере через /Machine/Sync.
         /// </summary>
-        public async Task<(bool Synced, string Error)> SaveProfileAndSyncAsync(MachineProfile profile)
+        public async Task<(bool Synced, string? Error)> SaveProfileAndSyncAsync(MachineProfile profile)
         {
             ArgumentNullException.ThrowIfNull(profile);
 

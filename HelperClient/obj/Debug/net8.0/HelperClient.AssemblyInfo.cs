@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HelperClient")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6aa08ade31a6838d4f8f8f554db706b3153a571d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ef3a1850c97957d7f949b41aecedc0ebc5ad64af")]
 [assembly: System.Reflection.AssemblyProductAttribute("HelperClient")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HelperClient")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

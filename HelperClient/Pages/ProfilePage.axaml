@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="325" d:DesignHeight="500"
+             x:Class="HelperClient.ProfilePage"
+                        xmlns:vm="using:HelperClient.ViewModels"
+                        x:DataType="vm:ProfileViewModel">
+
+        <Grid Background="#f0f0f0">
+                <ScrollViewer>
+                        <StackPanel Margin="10">
+
+                                <!-- Корпус (справочник /Housing/GetAll, без авторизации) -->
+                                <StackPanel>
+                                        <TextBlock Text="Корпус"/>
+                                        <ComboBox HorizontalAlignment="Stretch"
+                                                          ItemsSource="{Binding Housings}"
+                                                          SelectedItem="{Binding SelectedHousing}"
+                                                          DisplayMemberBinding="{Binding Name}"/>
+                                </StackPanel>
+
+                                <!-- Отделение (справочник /Department/GetAll, без авторизации) -->
+                                <StackPanel Margin="0 10 0 0">
+                                        <TextBlock Text="Отделение"/>
+                                        <ComboBox HorizontalAlignment="Stretch"
+                                                          ItemsSource="{Binding Departments}"
+                                                          SelectedItem="{Binding SelectedDepartment}"
+                                                          DisplayMemberBinding="{Binding Name}"/>
+                                </StackPanel>
+
+                                <!-- Номер кабинета -->
+                                <StackPanel Margin="0 10 0 0">
+                                        <TextBlock Text="Кабинет"/>
+                                        <TextBox Text="{Binding OfficeNumber}" MaxLength="255" Watermark="Например: 214"/>
+                                </StackPanel>
+
+                                <!-- MAC-адрес (можно править вручную, если автоопределение недоступно) -->
+                                <StackPanel Margin="0 10 0 0">
+                                        <TextBlock Text="MAC-адрес"/>
+                                        <TextBox Text="{Binding MacAddress}" Watermark="AA:BB:CC:DD:EE:FF"/>
+                                </StackPanel>
+
+                                <!-- IP-адреса со всех сетевых адаптеров -->
+                                <StackPanel Margin="0 10 0 0">
+                                        <TextBlock Text="IP-адреса (все адаптеры)"/>
+                                        <TextBox Text="{Binding IpAddressesText}"
+                                                           AcceptsReturn="True"
+                                                           TextWrapping="Wrap"
+                                                           MinHeight="70"/>
+                                        <Button Content="Проверить актуальные IP-адреса"
+                                                        Command="{Binding RefreshNetworkCommand}"
+                                                        HorizontalAlignment="Left"
+                                                        Margin="0 5 0 0"
+                                                        Padding="8 4"/>
+                                </StackPanel>
+
+                                <!-- Ошибки загрузки справочников -->
+                                <TextBlock Text="{Binding ReferencesLoadError}"
+                                                   Foreground="#c0392b" FontSize="11"
+                                                   TextWrapping="Wrap" Margin="0 8 0 0"
+                                                   IsVisible="{Binding ReferencesLoadError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                                <!-- Путь к локальному файлу конфигурации профиля -->
+                                <TextBlock Margin="0 12 0 0" FontSize="10" Foreground="#777777" TextWrapping="Wrap">
+                                        <Run Text="Файл конфигурации: "/><Run Text="{Binding ProfileFilePath}"/>
+                                </TextBlock>
+
+                                <Button Content="Сохранить"
+                                                Command="{Binding SaveCommand}"
+                                                Margin="0 20 0 0"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Center"
+                                                Background="#63b076"
+                                                Foreground="White"/>
+
+                                <Button Content="Обновить справочники"
+                                                Command="{Binding ReloadReferencesCommand}"
+                                                Margin="0 8 0 0"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Center"/>
+                        </StackPanel>
+                </ScrollViewer>
+        </Grid>
+</UserControl>

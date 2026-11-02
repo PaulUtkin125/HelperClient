@@ -33,6 +33,14 @@ namespace HelperClient.ViewModels
 
         [ObservableProperty]
         private bool _isExpanded;
+
+        /// <summary>При выборе категории в списке сообщаем об этом владельцу списка (<see cref="HomeViewModel.SelectedCategory"/>).</summary>
+        public event EventHandler<CategoryItemViewModel>? SelectionRequested;
+
+        partial void OnIsSelectedChanged(bool value)
+        {
+            if (value) SelectionRequested?.Invoke(this, this);
+        }
     }
 
     /// <summary>
@@ -77,12 +85,19 @@ namespace HelperClient.ViewModels
         /// <summary>Краткое описание выбранной категории с учётом иерархии (для кнопки/заявки).</summary>
         public string? SelectedCategoryPath => SelectedCategory?.FullName;
 
+        private void OnCategorySelectionRequested(object? sender, CategoryItemViewModel item) =>
+            SelectedCategory = item;
+
         partial void OnSelectedCategoryChanged(CategoryItemViewModel? value)
         {
+            // Синхронизация односторонняя: только выбор -> флаг чекбокса.
+            // Обратное снятие выделенного элемента здесь недопустимо —
+            // это рекурсивно сбросило бы IsSelected у RadioButton и зависло на переборе списка.
             if (value is not null) IsCustomErrorBoxEnable = false;
             OnPropertyChanged(nameof(CanSubmit));
             OnPropertyChanged(nameof(SelectedCategoryPath));
         }
+
 
         partial void OnIsCustomErrorBoxEnableChanged(bool value)
         {
@@ -109,7 +124,11 @@ namespace HelperClient.ViewModels
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     Categories.Clear();
-                    foreach (var item in flat) Categories.Add(item);
+                    foreach (var item in flat)
+                    {
+                        item.SelectionRequested += OnCategorySelectionRequested;
+                        Categories.Add(item);
+                    }
                 });
 
                 if (flat.Count == 0)
