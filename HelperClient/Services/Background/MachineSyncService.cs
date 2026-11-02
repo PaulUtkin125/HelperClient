@@ -30,6 +30,9 @@ namespace HelperClient.Services.Background
         /// <summary>Принудительная синхронизация профиля с сервером (после сохранения пользователем).</summary>
         Task<bool> SyncNowAsync(CancellationToken ct = default);
 
+        /// <summary>Заменить профиль извне (после редактирования пользователем на странице профиля).</summary>
+        void ApplyExternalProfile(MachineProfile profile);
+
         /// <summary>Отправить heartbeat вручную.</summary>
         Task<bool> HeartbeatNowAsync(CancellationToken ct = default);
     }
@@ -124,6 +127,13 @@ namespace HelperClient.Services.Background
             }
 
             return await SyncInternalAsync(ct).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public void ApplyExternalProfile(MachineProfile profile)
+        {
+            ArgumentNullException.ThrowIfNull(profile);
+            Profile = profile.Clone();
         }
 
         public async Task<bool> HeartbeatNowAsync(CancellationToken ct = default)

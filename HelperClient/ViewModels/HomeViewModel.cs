@@ -18,6 +18,9 @@ namespace HelperClient.ViewModels
 
         public string Name { get; init; } = string.Empty;
 
+        /// <summary>Полный путь категории с учётом иерархии, например «Оборудование → Принтер».</summary>
+        public string FullName { get; init; } = string.Empty;
+
         public int Level { get; init; }
 
         public bool IsLeaf { get; init; }
@@ -71,10 +74,14 @@ namespace HelperClient.ViewModels
             _ = LoadCategoriesAsync();
         }
 
+        /// <summary>Краткое описание выбранной категории с учётом иерархии (для кнопки/заявки).</summary>
+        public string? SelectedCategoryPath => SelectedCategory?.FullName;
+
         partial void OnSelectedCategoryChanged(CategoryItemViewModel? value)
         {
             if (value is not null) IsCustomErrorBoxEnable = false;
             OnPropertyChanged(nameof(CanSubmit));
+            OnPropertyChanged(nameof(SelectedCategoryPath));
         }
 
         partial void OnIsCustomErrorBoxEnableChanged(bool value)
@@ -97,7 +104,7 @@ namespace HelperClient.ViewModels
                 var roots = await Services.GetProblemCategoriesAsync().ConfigureAwait(false);
                 var flat = new List<CategoryItemViewModel>();
                 foreach (var root in roots)
-                    AddRecursive(root, flat);
+                    AddRecursive(root, flat, string.Empty);
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -118,19 +125,21 @@ namespace HelperClient.ViewModels
             }
         }
 
-        private static void AddRecursive(CategoryNode node, List<CategoryItemViewModel> target)
+        private static void AddRecursive(CategoryNode node, List<CategoryItemViewModel> target, string parentPath)
         {
+            var path = string.IsNullOrEmpty(parentPath) ? node.Name : $"{parentPath} → {node.Name}";
             target.Add(new CategoryItemViewModel
             {
                 Id = node.Id,
                 Name = node.Name,
+                FullName = path,
                 Level = node.Level,
                 IsLeaf = node.IsLeaf,
                 IsExpanded = node.Level == 0,
             });
 
             foreach (var child in node.Children)
-                AddRecursive(child, target);
+                AddRecursive(child, target, path);
         }
 
         [RelayCommand]
@@ -176,7 +185,7 @@ namespace HelperClient.ViewModels
                     .ConfigureAwait(false);
                 ShowStatus(result.Message);
 
-                if (result.Success)
+                if (result.IsSuccess)
                 {
                     SelectedCategory = null;
                     CustomProblem = string.Empty;
@@ -191,6 +200,14 @@ namespace HelperClient.ViewModels
                 if (item.IsLeaf) return item.Id;
             return Categories.Count > 0 ? Categories[0].Id : 0;
         }
+
+        /// <summary>Актуализация данных машины на сервере вручную (без авторизации).</summary>
+        [RelayCommand]
+        private Task SyncNowAsync() => RunAsync(async () =>
+        {
+            var ok = await Services.ForceSyncAsync().ConfigureAwait(false);
+            ShowStatus(ok ? "Данные машины актуализированы на сервере" : "Сервер недоступен, повторная попытка выполнится автоматически");
+        });
 
         private void OnServiceStatus(object? sender, string message) => ShowStatus(message);
     }

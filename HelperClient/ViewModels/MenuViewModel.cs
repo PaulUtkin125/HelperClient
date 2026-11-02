@@ -1,25 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HelperClient.ViewModels
 {
-    internal partial class MenuViewModel : ObservableObject
+    public partial class MenuViewModel : ObservableObject
     {
         private readonly MainWindowViewModel _mainWindow;
+        private ProfileViewModel? _profileViewModel;
 
-        public MenuViewModel(MainWindowViewModel mainWindow) 
+        public MenuViewModel(MainWindowViewModel mainWindow)
             => _mainWindow = mainWindow;
 
         [RelayCommand]
         private void OpenProfile()
         {
+            _profileViewModel ??= new ProfileViewModel(ViewModelLocator.Current);
             _mainWindow.PageHeadTitle = "Профиль";
-            _mainWindow.CurrentPage = new ProfileViewModel();
+            _mainWindow.CurrentPage = _profileViewModel;
         }
 
         [RelayCommand]

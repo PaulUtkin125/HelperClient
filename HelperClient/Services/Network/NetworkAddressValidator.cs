@@ -31,10 +31,9 @@ namespace HelperClient.Services.Network
         public static string NormalizeMac(string? value)
         {
             if (string.IsNullOrWhiteSpace(value)) return string.Empty;
-            var hex = new string(value.Where(c => bool.TryParse(c.ToString(), out _) || Uri.IsHexDigit(c)).ToArray());
-            hex = value.Replace("-", string.Empty).Replace(":", string.Empty).ToUpperInvariant();
+            var hex = new string(value.Where(Uri.IsHexDigit).ToArray());
             if (hex.Length != 12) return value.Trim().ToUpperInvariant();
-            return string.Join(":", System.Linq.Enumerable.Range(0, 6).Select(i => hex.Substring(i * 2, 2)));
+            return string.Join(":", Enumerable.Range(0, 6).Select(i => hex.Substring(i * 2, 2)));
         }
     }
 

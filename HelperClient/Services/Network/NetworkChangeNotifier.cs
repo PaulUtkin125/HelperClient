@@ -8,7 +8,7 @@ namespace HelperClient.Services.Network
 {
     /// <summary>
     /// Подписка на системные уведомления об изменении сетевых конфигураций
-    /// (NetworkInformation.NetworkAvailabilityChanged / NetworkChange),
+    /// (NetworkChange.NetworkAddressChanged / NetworkAvailabilityChanged),
     /// кроссплатформенно для Windows и Linux.
     /// </summary>
     public interface INetworkChangeNotifier : IDisposable
@@ -19,6 +19,15 @@ namespace HelperClient.Services.Network
         void Start();
 
         void Stop();
+
+        /// <summary>
+        /// Принудительная проверка: сравнить текущие адреса с эталоном и при расхождении вызвать событие.
+        /// Используется фоновым поллером как страховка, если ОС не прислала системное уведомление.
+        /// </summary>
+        bool CheckAgainst(IReadOnlyList<string> knownIps);
+
+        /// <summary>Отправить уведомление вручную (например, после сохранения профиля).</summary>
+        void NotifyNow();
     }
 
     public sealed class NetworkChangeNotifier : INetworkChangeNotifier
@@ -41,8 +50,8 @@ namespace HelperClient.Services.Network
             {
                 if (_started) return;
                 _started = true;
-                NetworkInformation.NetworkAvailabilityChanged += OnSystemEvent;
-                NetworkInformation.NetworkAddressChanged += OnSystemEvent;
+                NetworkChange.NetworkAvailabilityChanged += OnSystemEvent;
+                NetworkChange.NetworkAddressChanged += OnSystemEvent;
                 _debounceTimer = new Timer(_ => FlushPending(), null, Timeout.Infinite, Timeout.Infinite);
             }
         }
@@ -53,8 +62,8 @@ namespace HelperClient.Services.Network
             {
                 if (!_started) return;
                 _started = false;
-                NetworkInformation.NetworkAvailabilityChanged -= OnSystemEvent;
-                NetworkInformation.NetworkAddressChanged -= OnSystemEvent;
+                NetworkChange.NetworkAvailabilityChanged -= OnSystemEvent;
+                NetworkChange.NetworkAddressChanged -= OnSystemEvent;
                 _debounceTimer?.Dispose();
                 _debounceTimer = null;
             }

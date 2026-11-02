@@ -86,7 +86,6 @@ namespace HelperClient.Services.Network
             nic.NetworkInterfaceType is NetworkInterfaceType.Ethernet
                 or NetworkInterfaceType.Wireless80211
                 or NetworkInterfaceType.GigabitEthernet
-                or NetworkInterfaceType.FastEthernetTwinAx
                 or NetworkInterfaceType.FastEthernetFx;
 
         /// <summary>Форматирование «001122334455» → «00:11:22:33:44:55».</summary>
