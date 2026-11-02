@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HelperClient.Models.DTO.SimpleDto;
+using HelperClient.Models.Profile;
 using HelperClient.Services;
 
 namespace HelperClient.ViewModels
@@ -82,8 +84,6 @@ namespace HelperClient.ViewModels
         }
 
         partial void OnPhoneNumberChanged(string value) => OnPropertyChanged(nameof(CanSubmit));
-
-        partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(CanSubmit));
 
         [RelayCommand]
         private Task ReloadCategoriesAsync() => LoadCategoriesAsync();

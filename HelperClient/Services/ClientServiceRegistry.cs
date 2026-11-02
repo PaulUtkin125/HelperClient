@@ -93,8 +93,11 @@ namespace HelperClient.Services
             return HousingsCache;
         }
 
-        /// <summary>2. Создание профиля машины: сохранить локально + актуализировать на сервере (Machine/Sync).</summary>
-        public async Task<bool> SaveProfileAndSyncAsync(MachineProfile profile)
+        /// <summary>
+        /// 2. Создание профиля машины: валидация, сохранение в локальный файл конфигурации
+        /// и актуализация на сервере через /Machine/Sync.
+        /// </summary>
+        public async Task<(bool Synced, string Error)> SaveProfileAndSyncAsync(MachineProfile profile)
         {
             ArgumentNullException.ThrowIfNull(profile);
 
@@ -102,18 +105,37 @@ namespace HelperClient.Services
             var snapshot = NetworkInfoProvider.Capture();
             if (string.IsNullOrWhiteSpace(profile.MacAddress) || !NetworkAddressValidator.IsValidMac(profile.MacAddress))
                 profile.MacAddress = snapshot.MacAddress;
-            if (profile.IpAddresses.Count == 0)
+            if (profile.IpAddresses is null || profile.IpAddresses.Count == 0)
                 profile.IpAddresses = snapshot.Ipv4Addresses.ToList();
+            if (profile.MachineType <= 0)
+                profile.MachineType = Settings.DefaultMachineType;
+
+            // Валидация по ограничениям контракта Machine/Sync из спецификации.
+            if (profile.DepartmentId <= 0)
+                return (false, "Выберите отделение");
+            if (profile.HousingId <= 0)
+                return (false, "Выберите корпус");
+            if (!NetworkAddressValidator.IsValidMac(profile.MacAddress))
+                return (false, "Не удалось определить корректный MAC-адрес машины");
+            if (profile.IpAddresses.Count == 0 || profile.IpAddresses.Any(ip => !NetworkAddressValidator.IsValidIp(ip)))
+                return (false, "Не найдено ни одного корректного IP-адреса на сетевых адаптерах");
+            if (profile.OfficeNumber is { Length: > 255 })
+                return (false, "Номер кабинета не должен превышать 255 символов");
 
             await ProfileStore.SaveAsync(profile).ConfigureAwait(false);
-            SyncService.Profile.DepartmentId = profile.DepartmentId;
-            SyncService.Profile.HousingId = profile.HousingId;
-            SyncService.Profile.OfficeNumber = profile.OfficeNumber;
-            SyncService.Profile.MachineType = profile.MachineType;
-            SyncService.Profile.MacAddress = profile.MacAddress;
-            SyncService.Profile.IpAddresses = profile.IpAddresses;
+            SyncService.ApplyExternalProfile(profile);
 
-            return await SyncService.SyncNowAsync().ConfigureAwait(false);
+            try
+            {
+                var synced = await SyncService.SyncNowAsync().ConfigureAwait(false);
+                return synced
+                    ? (true, null)
+                    : (false, "Сервер недоступен: профиль сохранён локально, синхронизация повторится автоматически");
+            }
+            catch (ApiException ex)
+            {
+                return (false, ex.Message);
+            }
         }
 
         /// <summary>3. Проверка актуальности IP-адресов со всех сетевых адаптеров.</summary>
@@ -239,7 +261,7 @@ namespace HelperClient.Services
         }
     }
 
-    public sealed record RequestCreationResult(bool Success, string Message)
+    public sealed record RequestCreationResult(bool IsSuccess, string Message)
     {
         public static RequestCreationResult Success(string message) => new(true, message);
 
