@@ -7,7 +7,7 @@ namespace HelperClient.Models.DTO.MachinDto
     {
         public int Id { get; init; }
         
-        public string MAC_address { get; init; }
+        public string MAC_address { get; init; } = null!;
         public List<string> IP_address { get; set; } = new();
 
         [Required]

@@ -9,7 +9,7 @@ namespace HelperClient.Models.DTO.RequestDto
         public int MachineId { get; init; }
 
         [Required]
-        public string Create_DateTime {get; init; }
+        public string Create_DateTime { get; init; } = null!;
 
         [Required]
         [Range(1, int.MaxValue)]

@@ -6,7 +6,7 @@ namespace HelperClient.Models.DTO.MachinDto
     {
         [Required]
         [StringLength(18)]
-        public string MAC_address {  get; init; }
+        public string MAC_address { get; init; } = null!;
 
     }
 }
